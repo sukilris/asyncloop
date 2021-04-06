@@ -33,7 +33,7 @@ const _ = {
                             if (data) {
                                 const result = handle(data[init], init, data)
                                 if (callback) {
-                                    const flag = callback(result)
+                                    const flag = callback(result, data[init], init, data)
                                     if (flag === false) {
                                         return resolve()
                                     }
@@ -65,8 +65,8 @@ const _ = {
     },
     async filter(arr, handle) {
         const result = []
-        await _.for(0, i => i < arr.length, i => i + 1, handle, arr, function (cbResult) {
-            cbResult && result.push(cbResult)
+        await _.for(0, i => i < arr.length, i => i + 1, handle, arr, function (cbResult, item, index, arr) {
+            cbResult && result.push(item)
         })
         return result
     },
@@ -109,7 +109,27 @@ const _ = {
             result = cbResult
         })
         return result
-    }
+    },
+    async find(arr, handle) {
+        let result
+        await _.for(0, i => i < arr.length, i => i + 1, handle, arr, function (cbResult, item, index, arr) {
+            if (cbResult) {
+                result = item
+                return false
+            }
+        })
+        return result
+    },
+    async findIndex(arr, handle) {
+        let result = -1
+        await _.for(0, i => i < arr.length, i => i + 1, handle, arr, function (cbResult, item, index, arr) {
+            if (cbResult) {
+                result = index
+                return false
+            }
+        })
+        return result
+    },
 }
 
 export default _
